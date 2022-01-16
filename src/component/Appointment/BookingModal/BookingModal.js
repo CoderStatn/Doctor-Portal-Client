@@ -28,7 +28,7 @@ const BookingModal = ({
   date,
   setBookingSuccess,
 }) => {
-  const { name, time } = booking;
+  const { name, time, price } = booking;
   const { user } = useAuth();
   const initialInfo = {
     patientName: user.displayName,
@@ -50,11 +50,12 @@ const BookingModal = ({
     const appointment = {
       ...bookingInfo,
       time,
+      price,
       serviceName: name,
       date: date.toLocaleDateString(),
     };
     // send to the server
-    fetch("http://localhost:5000/appointments", {
+    fetch("https://lit-headland-42306.herokuapp.com/appointments", {
       method: "POST",
       headers: {
         "content-type": "application/json",

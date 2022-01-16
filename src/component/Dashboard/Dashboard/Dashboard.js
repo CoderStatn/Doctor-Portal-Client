@@ -6,26 +6,31 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
-import AppointmentIcon from "@mui/icons-material/MoveDown";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import DashboardIcon from "@mui/icons-material/Dashboard";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { Button, Grid, Paper } from "@mui/material";
-import Calendar from "../../shared/Calendar/Calendar";
-import Appointments from "../Appointments/Appointments";
-import { Link } from "react-router-dom";
+import { Button } from "@mui/material";
+import {
+  Switch,
+  Route,
+  Link,
+  useRouteMatch,
+} from "react-router-dom";
+import DashboardHome from "../DashboardHome/DashboardHome";
+import MakeAdmin from "../MakeAdmin/MakeAdmin";
+import AddDoctor from "../AddDoctor/AddDoctor";
+import useAuth from "../../../hooks/useAuth";
+import AdminRoute from "../../Login/AdminRoute/AdminRoute";
+import Payment from "../Payment/Payment";
 
 const drawerWidth = 240;
 
 function Dashboard(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [date, setDate] = React.useState(new Date());
+  const { admin } = useAuth();
+
+  let { path, url } = useRouteMatch();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -35,18 +40,66 @@ function Dashboard(props) {
     <div>
       <Toolbar />
       <Divider />
+      <Link style={{ textDecoration: "none" }} to={`${url}`}>
+        <Button
+          sx={{
+            width: "100%",
+            background: "linear-gradient(90deg, #19D3AE, #0FCFEC)",
+            color: "white",
+            fontWeight: 600,
+          }}
+        >
+          Dashboard
+        </Button>
+      </Link>
+      {admin && (
+        <Box>
+          <Link style={{ textDecoration: "none" }} to={`${url}/makeAdmin`}>
+            <Button
+              sx={{
+                width: "100%",
+                background: "linear-gradient(90deg, #19D3AE, #0FCFEC)",
+                color: "white",
+                fontWeight: 600,
+                my: 1,
+              }}
+            >
+              Make Admin
+            </Button>
+          </Link>
+          <Link style={{ textDecoration: "none" }} to={`${url}/addDoctor`}>
+            <Button
+              sx={{
+                width: "100%",
+                background: "linear-gradient(90deg, #19D3AE, #0FCFEC)",
+                color: "white",
+                fontWeight: 600,
+              }}
+            >
+              Add Doctor
+            </Button>
+          </Link>
+        </Box>
+      )}
       <Link style={{ textDecoration: "none" }} to="/appointment">
         <Button
           sx={{
             width: "100%",
             background: "linear-gradient(90deg, #19D3AE, #0FCFEC)",
             color: "white",
-            fontWeight:600
+            fontWeight: 600,
+            mt: 1,
           }}
         >
           Appointment
         </Button>
       </Link>
+      <Divider />
+      <Box sx={{ my: 10 }}>
+        <Link to="/home" style={{ textDecoration: "none" }}>
+          <Button sx={{ width: "100%" }}>Back to home page</Button>
+        </Link>
+      </Box>
     </div>
   );
 
@@ -131,18 +184,20 @@ function Dashboard(props) {
         }}
       >
         <Toolbar />
-        <Typography paragraph>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={5}>
-              <Paper sx={{ p: 3 }}>
-                <Calendar date={date} setDate={setDate}></Calendar>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={7}>
-              <Appointments date={date}></Appointments>
-            </Grid>
-          </Grid>
-        </Typography>
+        <Switch>
+          <Route exact path={path}>
+            <DashboardHome></DashboardHome>
+          </Route>
+          <Route path={`${path}/payment/:appointmentId`}>
+            <Payment></Payment>
+          </Route>
+          <AdminRoute path={`${path}/makeAdmin`}>
+            <MakeAdmin></MakeAdmin>
+          </AdminRoute>
+          <AdminRoute path={`${path}/addDoctor`}>
+            <AddDoctor></AddDoctor>
+          </AdminRoute>
+        </Switch>
       </Box>
     </Box>
   );

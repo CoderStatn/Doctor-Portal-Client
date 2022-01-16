@@ -8,38 +8,41 @@ import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
-  updateProfile
+  updateProfile,
+  getIdToken,
 } from "firebase/auth";
 
 initializeFirebase();
 const useFirebase = () => {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [authError, setAuthError] = useState("");
+  const [admin, setAdmin] = useState(false);
+  const [token, setToken] = useState("");
 
   const auth = getAuth();
   const googleProvider = new GoogleAuthProvider();
 
-  const registerUser = (name, email, password, history) => {
+  const registerUser = (email, password, name, history) => {
     setIsLoading(true);
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         setAuthError("");
-        const newUser = { email, displayName: name }
+        const newUser = { email, displayName: name };
         setUser(newUser);
+        // save user to the database
+        saveUser(email, name, "POST");
+        // send name to firebase after creation
         updateProfile(auth.currentUser, {
           displayName: name,
         })
-          .then(() => {
-            
-          })
-          .catch((error) => {
-            
-          });
-        history.replace('/');
+          .then(() => {})
+          .catch((error) => {});
+        history.replace("/");
       })
       .catch((error) => {
         setAuthError(error.message);
+        console.log(error);
       })
       .finally(() => setIsLoading(false));
   };
@@ -62,9 +65,8 @@ const useFirebase = () => {
     setIsLoading(true);
     signInWithPopup(auth, googleProvider)
       .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
         const user = result.user;
+        saveUser(user.email, user.displayName, "PUT");
         setAuthError("");
         const destination = location?.state?.from || "/";
         history.replace(destination);
@@ -73,20 +75,26 @@ const useFirebase = () => {
         setAuthError(error.message);
       })
       .finally(() => setIsLoading(false));
-  }
+  };
 
   useEffect(() => {
     const unsubcribed = onAuthStateChanged(auth, (user) => {
       if (user) {
-        const uid = user.uid;
         setUser(user);
+        getIdToken(user).then((idToken) => setToken(idToken));
       } else {
         setUser({});
       }
       setIsLoading(false);
     });
     return () => unsubcribed;
-  }, []);
+  }, [auth]);
+
+  useEffect(() => {
+    fetch(`https://lit-headland-42306.herokuapp.com/users/${user.email}`)
+      .then((res) => res.json())
+      .then((data) => setAdmin(data.admin));
+  }, [user.email]);
 
   const logout = () => {
     setIsLoading(true);
@@ -95,14 +103,27 @@ const useFirebase = () => {
         // Sign-out successful.
       })
       .catch((error) => {
-        setAuthError(error.message);
+        // An error happened.
       })
       .finally(() => setIsLoading(false));
+  };
+
+  const saveUser = (email, displayName, method) => {
+    const user = { email, displayName };
+    fetch("https://lit-headland-42306.herokuapp.com/users", {
+      method: method,
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(user),
+    }).then();
   };
 
   return {
     user,
     isLoading,
+    admin,
+    token,
     authError,
     registerUser,
     loginUser,

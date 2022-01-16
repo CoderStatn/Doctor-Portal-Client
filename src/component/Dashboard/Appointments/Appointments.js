@@ -7,18 +7,24 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
+import { Payment } from "@mui/icons-material";
 
 const Appointments = ({ date }) => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
-    const url = `http://localhost:5000/appointments?email=${user.email}&date=${date}`;
-    fetch(url)
+    const url = `https://lit-headland-42306.herokuapp.com/appointments?email=${user.email}&date=${date}`;
+    fetch(url, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => setAppointments(data));
-  }, [date]);
+  }, [date, user.email, token]);
 
   return (
     <div>
@@ -38,7 +44,7 @@ const Appointments = ({ date }) => {
               <TableCell>Name</TableCell>
               <TableCell align="right">Time</TableCell>
               <TableCell align="right">Service</TableCell>
-              <TableCell align="right">Action</TableCell>
+              <TableCell align="right">Payment</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -52,7 +58,28 @@ const Appointments = ({ date }) => {
                 </TableCell>
                 <TableCell align="right">{row.time}</TableCell>
                 <TableCell align="right">{row.serviceName}</TableCell>
-                <TableCell align="right">{row.fat}</TableCell>
+                <TableCell align="right">
+                  {row.payment ? (
+                    "Paid"
+                  ) : (
+                    <Link
+                      style={{ textDecoration: "none" }}
+                      to={`/dashboard/payment/${row._id}`}
+                    >
+                      <Button
+                        sx={{
+                          width: "100%",
+                          background:
+                            "linear-gradient(90deg,  #0FCFEC, #19D3AE)",
+                          color: "white",
+                          fontWeight: 500,
+                        }}
+                      >
+                        <Payment /> Pay
+                      </Button>
+                    </Link>
+                  )}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
