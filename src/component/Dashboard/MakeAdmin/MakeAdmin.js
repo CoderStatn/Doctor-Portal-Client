@@ -31,7 +31,7 @@ const MakeAdmin = () => {
   return (
     <div style={{ textAlign: "center" }}>
       <Typography
-        variant="h5"
+        variant="h6"
         component="div"
         sx={{ flexGrow: 1, color: "#0FCFEC" }}
       >
@@ -52,7 +52,7 @@ const MakeAdmin = () => {
         <MuiButton type="submit">Make Admin</MuiButton>
       </form>
       {success && (
-        <Alert variant="outlined" severity="success">
+        <Alert sx={{ my: 1 }} variant="outlined" severity="success">
           Admin Added Successfully!
         </Alert>
       )}

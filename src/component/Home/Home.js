@@ -3,6 +3,7 @@ import Navigation from "../../component/shared/Navigation/Navigation";
 import Appointment from "./Appointment/Appointment";
 import Banner from "./Banner/Banner";
 import Contact from "./Contact/Contact";
+import Doctors from "./Doctors/Doctors";
 import Footer from "./Footer/Footer";
 import InfoCard from "./InfoCard/InfoCard";
 import Services from "./Services/Services";
@@ -15,6 +16,7 @@ const Home = () => {
       <InfoCard />
       <Services />
       <Appointment />
+      <Doctors/>
       <Contact />
       <Footer />
     </div>

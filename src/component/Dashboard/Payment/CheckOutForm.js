@@ -90,8 +90,7 @@ const CheckOutForm = ({ appointment }) => {
   };
   return (
     <div>
-      <Paper sx={{ p: 3, my: 7 }}
-      >
+      <Paper sx={{ p: 3, my: 7 }}>
         <form onSubmit={handleSubmit}>
           <CardElement
             options={{

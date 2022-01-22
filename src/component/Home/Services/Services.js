@@ -8,7 +8,7 @@ import { services } from "../../../data/data";
 
 const Services = () => {
   return (
-    <Box sx={{ flexGrow: 1, textAlign:'center',my:5 }}>
+    <Box sx={{ textAlign:'center',my:5 }}>
       <Container>
         <Typography
           sx={{ fontWeight: 600, m: 2, color: "#19D3AE" }}

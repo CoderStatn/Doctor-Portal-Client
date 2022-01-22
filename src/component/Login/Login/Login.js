@@ -9,12 +9,11 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import login from "../../../images/login.png";
 import useAuth from "../../../hooks/useAuth";
 import MuiButton from "../../../StyledComponent/MuiButton";
 import { useLocation } from "react-router-dom";
-import { useHistory } from "react-router-dom";
 import GoogleIcon from "@mui/icons-material/Google";
 
 const Login = () => {
@@ -23,7 +22,7 @@ const Login = () => {
   const [loginData, setLoginData] = useState({});
 
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
   
   const handleOnChange = (e) => {
     const field = e.target.name;
@@ -33,12 +32,12 @@ const Login = () => {
     setLoginData(newLoginData);
   };
   const handleLoginSubmit = (e) => {
-    loginUser(loginData.email, loginData.password, location, history);
+    loginUser(loginData.email, loginData.password, location, navigate);
     e.preventDefault();
   };
 
   const handleGoogleSingIn = () => {
-    singInWithGoogle(location, history)
+    singInWithGoogle(location, navigate)
   }
   return (
     <Container sx={{ textAlign: "center" }}>

@@ -9,16 +9,15 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import MuiButton from "../../../StyledComponent/MuiButton";
 
 import login from "../../../images/login.png";
 import useAuth from "../../../hooks/useAuth";
-import { useHistory } from "react-router-dom";
 
 const Register = () => {
   const [loginData, setLoginData] = useState({});
-  const history = useHistory();
+  const navigate = useNavigate();
   const { user, registerUser, isLoading, authError } = useAuth();
 
   const handleOnBlur = (e) => {
@@ -33,7 +32,7 @@ const Register = () => {
       alert("Password Didn't Matched");
       return;
     }
-    registerUser(loginData.name, loginData.email, loginData.password, history);
+    registerUser(loginData.name, loginData.email, loginData.password, navigate);
     e.preventDefault();
   };
   return (
